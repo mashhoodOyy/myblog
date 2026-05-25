@@ -1,13 +1,21 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.contrib import messages
 from .models import Post
 from .forms import PostForm, SignupForm
 
 def post_list(request):
-    posts = Post.objects.all()
-    return render(request, 'blog/post_list.html', {'posts': posts})
+    query = request.GET.get('q', '')
+    if query:
+        all_posts = Post.objects.filter(title__icontains=query).order_by('-created_at')
+    else:
+        all_posts = Post.objects.all().order_by('-created_at')
+    paginator = Paginator(all_posts, 3)
+    page_number = request.GET.get('page')
+    posts = paginator.get_page(page_number)
+    return render(request, 'blog/post_list.html', {'posts': posts, 'query': query})
 
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
