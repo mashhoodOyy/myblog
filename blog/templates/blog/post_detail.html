@@ -1,0 +1,24 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+    <div class="card p-2">
+        <div class="card-body p-4">
+            <h1 style="font-weight:700; color:#1a1a2e;">{{ post.title }}</h1>
+            <div class="post-meta mt-2">
+                ✍️ {{ post.author.username }} &nbsp;|&nbsp; 🕒 {{ post.created_at|date:"M d, Y" }}
+            </div>
+            <hr>
+            <p class="post-content">{{ post.content }}</p>
+            <hr>
+            <div class="d-flex gap-2 mt-3">
+                {% if request.user == post.author %}
+                    <a href="{% url 'post_edit' post.pk %}" class="btn btn-warning btn-sm">✏️ Edit</a>
+                    <a href="{% url 'post_delete' post.pk %}" class="btn btn-danger btn-sm">🗑️ Delete</a>
+                {% endif %}
+                <a href="{% url 'post_list' %}" class="btn btn-secondary btn-sm">← Back</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
